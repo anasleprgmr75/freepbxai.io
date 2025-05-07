@@ -107,3 +107,5 @@ The asterisk system, at the heart of the FreePBX software has access to files in
 
 Open (or create) the file script.py by typing ``sudo nano /var/lib/asterisk/agi-bin/script.py``. And add the following first lines: 
 <pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
+
+<pre><code>```python def greet(name): print(f"Hello, {name}!") ```</code></pre>
