@@ -46,7 +46,22 @@ For now, only add the following lines:
   same => n,Hangup()
 </code></pre>
 
-This file contains what is called the dial plan of extension 8008, or in other words, what your FreePBX server will execute when you dial extension 8008. 
+This file contains what is called the dialplan of extension 8008, or in other words, what your FreePBX server will execute when you dial extension 8008. 
+You may then reload the dialplan with <pre><code>sudo asterisk -rx "dialplan reload"</code></pre>
 
-### 3.2 Modify 
+### 3.2 Add a custom destination in FreePBX 
+
+On your FreePBX config webpage, go to Admin > Custom Destinations. Add a new one:
+Custom Destination: custom-openai,8008,1
+Description: ChatGPT Assistant
+
+Submit and Apply Config
+### 3.3 Create a Misc Application
+Go to Applications > Misc Applications and add :
+Feature Code: 8008
+Destination>Custom Destination : ChatGPT Assistant
+
+Submit and Apply Config
+
+❗ **Note:** When modifying a FreePBX file, always reload the dialplan for the configuration to take place. Same applies when modifying from the user interface in 3.2 and 3.3, submit first and then click on the red square in the upper right corner "Apply Config". 
 
