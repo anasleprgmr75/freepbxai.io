@@ -94,7 +94,7 @@ A few explanations for this code : the function ``Playback`` plays a desired sou
 
 The python script does not exist yet and will be created in the next section. You may dial the phone at this point while looking in the log files of asterisk to check if you hear a beep and then see a recording appear in ``/var/lib/asterisk/sounds/custom``. 
 
-❗ **Note:** Don't forget the ``sudo asterisk -rx "dialplan reload"`` command
+❗ **Note:** Do not forget the ``sudo asterisk -rx "dialplan reload"`` command
 
 
 ---
@@ -197,8 +197,32 @@ subprocess.run([
     "-y",
     "/var/lib/asterisk/sounds/custom/finalplayback.ulaw"])
 ```
+Note a slight volume adjustment with ``volume=6dB``. 
 
 Now that the code is finished, do not the forget the following line to make the python code executable by Asterisk:
 <pre><code>sudo chmod +x /var/lib/asterisk/agi-bin/script.py</code></pre>
 And of course, update the dialplan!
 <pre><code>sudo asterisk -rx "dialplan reload"</code></pre>
+
+---
+
+##Tweaking the virtual extension
+
+Custom sounds and audio files can be created by visiting [OpenAI FM playground](https://www.openai.fm/) for free! You can create for instance a welcome sound to great the user and give basic instructions ! Once downloaded, the files can be converted usding the folowing script and copied to ``/var/lib/asterisk/sounds/custom`` for a nicer experience. 
+
+```python
+from pydub import AudioSegment
+import subprocess
+
+subprocess.run([
+    "ffmpeg",
+    "-i", "YOUR_INPUT_FILE.wav",
+    "-ar", "8000",          # 8kHz sample rate (telephony standard)
+    "-ac", "1",            # Mono channel
+    "-af", "volume=2dB",
+    "-acodec", "pcm_mulaw", # μ-law encoding
+    "-f", "mulaw",         # Raw ulaw format (no WAV container)
+    "-y",                  # Overwrite if exists
+    "YOUR_OUTPUT_FILE.ulaw"])
+
+Many other parameters, types of API can be implemented in a FreePBX system, the possibilities are endless! A SIP trunk with a phone number can also be used for calling the AI anywhere you are. 
