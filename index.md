@@ -109,3 +109,8 @@ Open (or create) the file script.py by typing ``sudo nano /var/lib/asterisk/agi-
 <pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
 
 <pre><code>```python def greet(name): print(f"Hello, {name}!") ```</code></pre>
+```python
+def add(a, b):
+    return a + b
+```
+words
