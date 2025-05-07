@@ -10,3 +10,4 @@ In this tutorial, you can follow step by step on the creation of a virtual exten
 
 This project is based around the usage of an self hosted IPBX. 
 Use `git status` to check changes.
+<pre><code>```python def hello(): print("Hello, world!") ```</code></pre>
