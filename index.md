@@ -139,6 +139,30 @@ client = speech.SpeechClient(credentials=credentials)
 genai.configure(credentials=credentials)
 agi_command("VERBOSE \"Authentification done\" 2")
 ```
-Note the location of the google json service account file, that can be downloaded from Google cloud. 
+Note the location of the google json service account file, that can be downloaded from Google cloud. The `VERBOSE`` command is creatde for troubleshooting reasons to display a message in the Asterisk Logfiles. 
 
 Then add the folowing lines responsible for sending the recording to Google Cloud STT. 
+
+```python
+#Sending audio to google for STT
+agi_command("VERBOSE \"Sending file to google\" 2")
+import io
+with io.open("/var/lib/asterisk/sounds/custom/recording.wav", 'rb') as f: 
+    content = f.read()
+    audio = speech.RecognitionAudio(content=content)
+config = speech.RecognitionConfig(language_code = 'en-US')
+question = client.recognize(config=config, audio = audio)
+transcript = question.results[0].alternatives[0].transcript
+```
+And then creating a generative AI request to Google Cloud
+
+```python
+model = genai.GenerativeModel("gemini-2.0-flash")
+chat = model.start_chat(history=[
+    {"role": "user", 
+        "parts": ["You are a friendly phone assistant and directly give answer without asking question. Sound human and always say goodbye."]}])
+response = chat.send_message(str(question))
+```
+The model ``gemini-2.0-flash`` was chosen for this project, but feel free to choose one that suits your needs. The ``parts`` parameter describes the general behaviour of the response requested from Google Cloud Gemini. 
+
+💡 **Note:** In a more developped version of this code, it would possible to integrate the question with a user history and personalize even more the response obtained from Google Cloud. A longer, more detailed response can cost money when it comes to the next steps with an OpenAI TTS. 
