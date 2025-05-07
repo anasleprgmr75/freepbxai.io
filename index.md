@@ -106,11 +106,39 @@ The python script does not exist yet and will be created in the next section. Yo
 The asterisk system, at the heart of the FreePBX software has access to files in its directories. This unfortunately means that the python code needs to be modified within the Linux terminal in the ``su`` mode. 
 
 Open (or create) the file script.py by typing ``sudo nano /var/lib/asterisk/agi-bin/script.py``. And add the following first lines: 
-<pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
 
-<pre><code>```python def greet(name): print(f"Hello, {name}!") ```</code></pre>
 ```python
-def add(a, b):
-    return a + b
+#!/usr/bin/python
+import sys
+from google.cloud import speech
+from google.oauth2 import service_account
+import google.generativeai as genai
+from openai import OpenAI
+from pydub import AudioSegment
+import subprocess
+
 ```
-words
+❗ **Note:** The first line of this code is very import, and indicates the ``AGI`` command that the file is written in python. The rest of the libraries are for future use in the code. 
+
+The following lines in the code are for communication between the python file and the code. 
+```python
+def agi_command(cmd):
+    sys.stdout.write(cmd + '\n')
+    sys.stdout.flush()
+    return sys.stdin.readline().strip()
+```
+This function translates a python command to execute it inside the Asterisk command line such as ``Playback``, ``MixMonitor`` and even ``Verbose`` to print messages in the Asterisk log files. 
+
+The following lines are for authetification puproses to the Google Cloud and OpenAI APIs. 
+
+```python
+#APIs identifications
+client_file = "/var/lib/asterisk/agi-bin/google-creds.json"
+credentials = service_account.Credentials.from_service_account_file(client_file)
+client = speech.SpeechClient(credentials=credentials)
+genai.configure(credentials=credentials)
+agi_command("VERBOSE \"Authentification done\" 2")
+```
+Note the location of the google json service account file, that can be downloaded from Google cloud. 
+
+Then add the folowing lines responsible for sending the recording to Google Cloud STT. 
