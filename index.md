@@ -227,5 +227,5 @@ subprocess.run([
     "-f", "mulaw",         # Raw ulaw format (no WAV container)
     "-y",                  # Overwrite if exists
     "YOUR_OUTPUT_FILE.ulaw"])
-
+```
 Many other parameters, types of API can be implemented in a FreePBX system, the possibilities are endless! A SIP trunk with a phone number can also be used for calling the AI anywhere you are. 
