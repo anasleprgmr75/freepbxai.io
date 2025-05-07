@@ -94,14 +94,14 @@ A few explanations for this code : the function ``Playback`` plays a desired sou
 
 The python script does not exist yet and will be created in the next section. You may dial the phone at this point while looking in the log files of asterisk to check if you hear a beep and then see a recording appear in ``/var/lib/asterisk/sounds/custom``. 
 
-❗ **Note:** Don't forget the ``sudo asterisk -rx "dialplan reloaad"`` command
+❗ **Note:** Don't forget the ``sudo asterisk -rx "dialplan reload"`` command
 
 
 ---
 
 ## 4. Create the python executable code
 
-💡 **Note:** Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. 
+💡 **Note:** Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. Considering the length of the python script, it is recommended to first work in Visual Studio Code to test the different libraries and test each bit of code in the AGI script execution by dialing the number. This method is long and tedious, but allows for smooth coding and rapid isolation of issues. Indeed, while Visual Studio Code displays the errors during execution, FreePBX does not give details on the specific line that caused the code to crash. 
 
 The asterisk system, at the heart of the FreePBX software has access to files in its directories. This unfortunately means that the python code needs to be modified within the Linux terminal in the ``su`` mode. 
 
@@ -182,4 +182,23 @@ audio.stream_to_file("/var/lib/asterisk/sounds/custom/speech.wav")
 ```
 The ``tts-1`` model is used since audio quality will be changed in the next step. Feel free to use any other voice than ``nova``. Visit the [OpenAI documentation](https://platform.openai.com/docs/guides/text-to-speech) for personalization of the audio file, its emotions and its speed. 
 
-From practice, it was noticed that Asterisk and FreePBX have very specific requirements when it comes to the encoding in ``wav`` files. THe more supported ``ulaw`` file format conserves the audio quality and allows for Asterisk playback. 
+From practice, it was noticed that Asterisk and FreePBX have very specific requirements when it comes to the encoding in ``wav`` files. THe more supported ``ulaw`` file format conserves the audio quality and allows for Asterisk playback. Within Python, it is possible to convert the ``wav`` file into a ``ulaw`` file with the following lines. 
+
+```pyhton
+#Convert OpenAI WAV to ULAW for playback in Asterisk
+subprocess.run([
+    "ffmpeg",
+    "-i", "/var/lib/asterisk/sounds/custom/speech.wav",
+    "-ar", "8000",
+    "-ac", "1",
+    "-af", "volume=6dB",
+    "-acodec", "pcm_mulaw",
+    "-f", "mulaw",
+    "-y",
+    "/var/lib/asterisk/sounds/custom/finalplayback.ulaw"])
+```
+
+Now that the code is finished, do not the forget the following line to make the python code executable by Asterisk:
+<pre><code>sudo chmod +x /var/lib/asterisk/agi-bin/script.py</code></pre>
+And of course, update the dialplan!
+<pre><code>sudo asterisk -rx "dialplan reload"</code></pre>
