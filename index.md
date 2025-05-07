@@ -23,3 +23,13 @@ The linux terminal in Debian is used to install the necessary software:
 - [OpenAI cloud API](https://platform.openai.com/docs/libraries?language=python) for which you need to create an API key
 - [pydub](https://pypi.org/project/pydub/)
 - [subprocess](https://pypi.org/project/subprocess.run/)
+
+💡 **Note:** Always use the root user in the Linux terminal by running first the ``su`` command and entering your root password setup during installation. 
+
+---
+
+## 3.Create the virtual extension
+
+Log in your FreePBX dashboard using the IP adress noted at the begining of section 2. 
+
+After your phones had been setup with an extension in the menu Connectivity>Extensions, they should be up and running and able to call themselves. To call the AI assistant, a virtual extension need to be created (in our case extension 8008) than can be called on demand by each person owning a phone. 
