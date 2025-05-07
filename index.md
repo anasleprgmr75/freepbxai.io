@@ -11,7 +11,8 @@ In this tutorial, you can follow step by step on the creation of a virtual exten
 This project is based around the usage of an self hosted IP PBX. For more information on what an IP PBX is, please visit this [Wikipedia](https://en.wikipedia.org/wiki/IP_PBX) page. Please visit the [FreePBX](https://www.freepbx.org/get-started/) website for proper install. The phone provisioning server (in this case a virtual machine), contains all the necessary scripts, sounds and files to make the project possible. 
 In such hosted system, an IP phone is necessary to communicate with the provisioning server. This project utilizes a [Polycom VVX 411](https://www.voipsupply.com/polycom-vvx-411) IP phone which has the advantage of high quality communication. 
 
-The script is intended to follow these steps : create a recordig of the user's voice, submit it to Google cloud for STT to obtain the transcript, submit the transcrpit to Google Cloud again for generative AI response, submit the response to 
+The script is intended to follow these steps : create a recordig of the user's voice, submit it to Google cloud for STT to obtain the transcript, submit the transcrpit to Google Cloud again for generative AI response, submit the response to OpenAI TTS, receive he file and last but not least, play it to the user. 
+Google cloud was used for STT and generative text since they are quite inexpensive or free for small usage like ours. OpenAI was used for TTS since their voice models are realistic and bring a human touch to the answer. 
 
 ---
 
@@ -71,7 +72,23 @@ Submit and Apply Config
 
 ## 4. Create the recording
 
-After python code experimenting, a successful case scenario was obtained when a recording of the question is fie
+After python code experimenting, a successful case scenario was obtained when a recording of the question is first created before executing the Python code. To perform this, the ``custom_extensions.conf`` file can be modified to create a recording in the dialplan with <pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
+
+There, the following lines can be added :
+
+<pre><code>[custom-openai]
+  exten => 8008,1,Answer()
+  same => n,Wait(1)
+  same => n,Playback(beep)
+  same => n,MixMonitor(/var/lib/asterisk/sounds/custom/recording.wav)
+  same => n,WaitForSilence(2000 200)
+  same => n,StopMixMonitor()
+  same => n,AGI(script.py)
+  same => n,Playback(/var/lib/asterisk/sounds/custom/finalplayback)
+  same => n,Hangup()
+</code></pre>
+
+A few explanations for this code : the function ``Playback`` plays a desired sound to the phone user. The beep notifies the user it is allowed to talk, the ``MixMonitor`` function records the line and saves it as a ``wav`` file in a custom directory. When silence is detected on the line for 2s, the recording stops and the python script can be run with the ``AGI``command. Lastly, when the script has generatde a playback file received from OpenAI, it is played to the user. 
 
 ---
 
