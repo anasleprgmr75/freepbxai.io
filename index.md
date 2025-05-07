@@ -1,6 +1,6 @@
 # Welcome to the FreePBX AI assistant project!
 
-This project's intent is to create an extension programmable on buisness IP Phones, linked to an OpenAI asssitant. Useful for buisnesses, schools or research facilities, its entent is to quickly answer a question without the need to search the Web. Integrated into a phone, it functions similarly to a consummer available voice assistant (Google, Siri, Alexa, ...). However, it does not listen permanently and answer on a simple phone call. 
+This project's intent is to create an extension programmable on business IP Phones, linked to an OpenAI assitant. Useful for businesses, schools or research facilities, its intent is to quickly answer a question without the need to search the Web. Integrated into a phone, it functions similarly to a consumer available voice assistant (Google, Siri, Alexa, ...). However, it does not listen permanently and answer on a simple phone call.
 
 In this tutorial, you can follow step by step the creation of a virtual extension on FreePBX, a python executable code and some custom sounds utilization. 
 Consult this [Video](https://anasleprgmr75.github.io/freepbxai.io/demo.mp4)
@@ -9,7 +9,7 @@ Consult this [Video](https://anasleprgmr75.github.io/freepbxai.io/demo.mp4)
 
 ## 1. Requirements and Introduction
 
-This project is based around the usage of an self hosted IP PBX. For more information on what an IP PBX is, please visit this [Wikipedia](https://en.wikipedia.org/wiki/IP_PBX) page. The phone provisioning server (in this case a virtual machine), contains all the necessary scripts, sounds and files to make the project possible. 
+This project is based around the usage of a self hosted IP PBX. For more information on what an IP PBX is, please visit this [Wikipedia](https://en.wikipedia.org/wiki/IP_PBX) page. The phone provisioning server (in this case a virtual machine), contains all the necessary scripts, sounds and files to make the project possible. 
 With such hosted system, an IP phone is necessary to communicate with the provisioning server. This project utilizes a [Polycom VVX 411](https://www.voipsupply.com/polycom-vvx-411) IP phone which has the advantage of HD sound communication. 
 
 The script is intended to follow these steps : create a recordig of the user's voice, submit it to Google cloud for STT to obtain the transcript, submit the transcript to Google Cloud again for generative AI response, submit the response to OpenAI TTS, receive the file and last but not least, play it to the user. 
@@ -23,8 +23,8 @@ Once the Debian operating system is installed, please note down the IP adress of
 The linux terminal in Debian is used to install the necessary software:
 - [FreePBX](https://www.freepbx.org/get-started/)
 - [Python](https://wiki.debian.org/Python)
-- [Google Cloud services API](https://github.com/googleapis/google-api-python-client) for which you need to create a service account key
-- [OpenAI cloud API](https://platform.openai.com/docs/libraries?language=python) for which you need to create an API key, enable the STT API and the Gemini generative AI API
+- [Google Cloud services API](https://github.com/googleapis/google-api-python-client) for which you need to create a service account key, enable the STT API and the Gemini generative AI API
+- [OpenAI cloud API](https://platform.openai.com/docs/libraries?language=python) for which you need to create an API key,
 - [pydub](https://pypi.org/project/pydub/)
 - [subprocess](https://pypi.org/project/subprocess.run/)
 
@@ -97,6 +97,7 @@ A few explanations for this code : the function ``Playback`` plays a desired sou
 The python script does not exist yet and will be created in the next section. You may dial the phone at this point while looking in the log files of asterisk to check if you hear a beep and then see a recording appear in ``/var/lib/asterisk/sounds/custom``.
 
 ✅ **Info:** The ``Playback`` function does not require a ``wav`` or ``ulaw`` extension while the ``MixMonitor`` function does.
+
 ❗ **Note:** Do not forget the ``sudo asterisk -rx "dialplan reload"`` command before dialing. 
 
 
@@ -123,7 +124,7 @@ import subprocess
 ```
 ❗ **Note:** The first line of this code is very important, and indicates the ``AGI`` command that the file is written in python. The rest of the libraries are for future use in the code. 
 
-The following lines in the code are for communication between the python file and the code. 
+The following lines in the code are for communication between the python file and Asterisk. 
 ```python
 def agi_command(cmd):
     sys.stdout.write(cmd + '\n')
@@ -220,12 +221,12 @@ import subprocess
 subprocess.run([
     "ffmpeg",
     "-i", "YOUR_INPUT_FILE.wav",
-    "-ar", "8000",          # 8kHz sample rate (telephony standard)
-    "-ac", "1",            # Mono channel
+    "-ar", "8000",         
+    "-ac", "1",           
     "-af", "volume=2dB",
-    "-acodec", "pcm_mulaw", # μ-law encoding
-    "-f", "mulaw",         # Raw ulaw format (no WAV container)
-    "-y",                  # Overwrite if exists
+    "-acodec", "pcm_mulaw", 
+    "-f", "mulaw",        
+    "-y",              
     "YOUR_OUTPUT_FILE.ulaw"])
 ```
-Many other parameters, types of API can be implemented in a FreePBX system, the possibilities are endless! A SIP trunk with a phone number can also be used for calling the AI anywhere you are. 
+Many other parameters or types of API can be implemented in a FreePBX system, the possibilities are endless! A SIP trunk with a phone number can also be used for calling the AI anywhere you are. 
