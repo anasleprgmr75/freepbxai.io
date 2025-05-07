@@ -72,6 +72,8 @@ Submit and Apply Config
 
 ## 4. Create the recording
 
+💡 **Note:** Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. 
+
 After python code experimenting, a successful case scenario was obtained when a recording of the question is first created before executing the Python code. To perform this, the ``custom_extensions.conf`` file can be modified to create a recording in the dialplan with <pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
 
 There, the following lines can be added :
@@ -88,13 +90,20 @@ There, the following lines can be added :
   same => n,Hangup()
 </code></pre>
 
-A few explanations for this code : the function ``Playback`` plays a desired sound to the phone user. The beep notifies the user it is allowed to talk, the ``MixMonitor`` function records the line and saves it as a ``wav`` file in a custom directory. When silence is detected on the line for 2s, the recording stops and the python script can be run with the ``AGI``command. Lastly, when the script has generatde a playback file received from OpenAI, it is played to the user. 
+A few explanations for this code : the function ``Playback`` plays a desired sound to the phone user. The beep notifies the user it is allowed to talk, the ``MixMonitor`` function records the line and saves it as a ``wav`` file in a custom directory. When silence is detected on the line for 2s, the recording stops and the python script can be run with the ``AGI``command. Lastly, when the script has generated a playback file received from OpenAI, it is played to the user. 
+
+The python script does not exist yet and will be created in the next section. You may dial the phone at this point while looking in the log files of asterisk to check if you hear a beep and then see a recording appear in ``/var/lib/asterisk/sounds/custom``. 
+
+❗ **Note:** Don't forget the ``sudo asterisk -rx "dialplan reloaad"`` command
+
 
 ---
 
 ## 4. Create the python executable code
 
+💡 **Note:** Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. 
 
-💡 **Note:**: Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. 
+The asterisk system, at the heart of the FreePBX software has access to files in its directories. This unfortunately means that the python code needs to be modified within the Linux terminal in the ``su`` mode. 
 
-The asterisk system, at the heart of the FreePBX software has access to files in its directories. This unfortunately means that the code needs to be 
+Open (or create) the file script.py by typing ``sudo nano /var/lib/asterisk/agi-bin/script.py``. And add the following first lines: 
+<pre><code>sudo nano /etc/asterisk/extensions_custom.conf</code></pre>
