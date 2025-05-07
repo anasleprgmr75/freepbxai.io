@@ -8,5 +8,5 @@ In this tutorial, you can follow step by step on the creation of a virtual exten
 
 ## Requirements
 
-This project is based around the usage of an self hosted IPBX. 
+This project is based around the usage of an self hosted IPBX. Please visit the [FreePBX](https://www.freepbx.org/get-started/) for proper install. The phone provisonning server (in this case a virtual machine), contains all the necessary scripts and 
 <pre><code>install IPBX</code></pre>
