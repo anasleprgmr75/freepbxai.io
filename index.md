@@ -6,10 +6,12 @@ In this tutorial, you can follow step by step on the creation of a virtual exten
 
 ---
 
-## 1. Requirements
+## 1. Requirements and Introduction
 
 This project is based around the usage of an self hosted IP PBX. For more information on what an IP PBX is, please visit this [Wikipedia](https://en.wikipedia.org/wiki/IP_PBX) page. Please visit the [FreePBX](https://www.freepbx.org/get-started/) website for proper install. The phone provisioning server (in this case a virtual machine), contains all the necessary scripts, sounds and files to make the project possible. 
 In such hosted system, an IP phone is necessary to communicate with the provisioning server. This project utilizes a [Polycom VVX 411](https://www.voipsupply.com/polycom-vvx-411) IP phone which has the advantage of high quality communication. 
+
+The script is intended to follow these steps : create a recordig of the user's voice, submit it to Google cloud for STT to obtain the transcript, submit the transcrpit to Google Cloud again for generative AI response, submit the response to 
 
 ---
 
@@ -65,3 +67,17 @@ Submit and Apply Config
 
 ❗ **Note:** When modifying a FreePBX file, always reload the dialplan for the configuration to take place. Same applies when modifying from the user interface in 3.2 and 3.3, submit first and then click on the red square in the upper right corner "Apply Config". 
 
+---
+
+## 4. Create the recording
+
+After python code experimenting, a successful case scenario was obtained when a recording of the question is fie
+
+---
+
+## 4. Create the python executable code
+
+
+💡 **Note:**: Troubleshooting and debugging can be done from the FreePBX user interface in Reports>System Logfiles. 
+
+The asterisk system, at the heart of the FreePBX software has access to files in its directories. This unfortunately means that the code needs to be 
