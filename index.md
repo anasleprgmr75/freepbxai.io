@@ -157,6 +157,7 @@ transcript = question.results[0].alternatives[0].transcript
 And then creating a generative AI request to Google Cloud
 
 ```python
+#Generating text from Google STT with Gemini
 model = genai.GenerativeModel("gemini-2.0-flash")
 chat = model.start_chat(history=[
     {"role": "user", 
@@ -166,3 +167,19 @@ response = chat.send_message(str(question))
 The model ``gemini-2.0-flash`` was chosen for this project, but feel free to choose one that suits your needs. The ``parts`` parameter describes the general behaviour of the response requested from Google Cloud Gemini. 
 
 💡 **Note:** In a more developped version of this code, it would possible to integrate the question with a user history and personalize even more the response obtained from Google Cloud. A longer, more detailed response can cost money when it comes to the next steps with an OpenAI TTS. 
+
+Now, with an obtained response from Google Cloud, the TTS engine can be utilized to create a human sounding voice for the user.
+
+```python
+#Generating voice with OpenAI TTS
+speechclient = OpenAI(api_key="YOUR API KEY FROM OPENAI")
+audio = speechclient.audio.speech.create(
+    model = "tts-1",
+    voice = 'nova',
+    input=str(response.text))
+audio.stream_to_file("/var/lib/asterisk/sounds/custom/speech.wav")
+
+```
+The ``tts-1`` model is used since audio quality will be changed in the next step. Feel free to use any other voice than ``nova``. Visit the [OpenAI documentation](https://platform.openai.com/docs/guides/text-to-speech) for personalization of the audio file, its emotions and its speed. 
+
+From practice, it was noticed that Asterisk and FreePBX have very specific requirements when it comes to the encoding in ``wav`` files. THe more supported ``ulaw`` file format conserves the audio quality and allows for Asterisk playback. 
